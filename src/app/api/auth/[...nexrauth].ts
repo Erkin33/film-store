@@ -12,7 +12,7 @@ export default NextAuth({
         email: { label: "Email", type: "text", placeholder: "test@example.com" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         // Найти пользователя по email
         const user = await prisma.user.findUnique({
           where: { email: credentials?.email },
@@ -21,7 +21,7 @@ export default NextAuth({
         // Сравнить пароль
         const isValid = await bcrypt.compare(credentials!.password, user.password);
         if (!isValid) return null;
-        // Приводим id к строке, так как NextAuth ожидает строку
+        // Приводим id к строке, чтобы удовлетворить требования NextAuth
         return { ...user, id: String(user.id) };
       }
     })
