@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 
-// PUT: Обновление пользователя
 export async function PUT(request: NextRequest, context: any) {
   const { params } = context;
   try {
@@ -30,7 +29,6 @@ export async function PUT(request: NextRequest, context: any) {
   }
 }
 
-// DELETE: Удаление пользователя
 export async function DELETE(request: NextRequest, context: any) {
   const { params } = context;
   try {
