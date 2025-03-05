@@ -21,7 +21,8 @@ export default NextAuth({
         // Сравнить пароль
         const isValid = await bcrypt.compare(credentials!.password, user.password);
         if (!isValid) return null;
-        return user;
+        // Приводим id к строке, так как NextAuth ожидает строку
+        return { ...user, id: String(user.id) };
       }
     })
   ],
