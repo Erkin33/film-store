@@ -1,101 +1,131 @@
-import Image from "next/image";
+// app/page.tsx
+import Image from 'next/image';
 
-export default function Home() {
+interface Movie {
+  id: number;
+  title: string;
+  coverUrl: string;
+  description: string;
+  genre: string;
+}
+
+export default async function HomePage() {
+  // Получаем данные с API. Для локальной разработки используется NEXTAUTH_URL или http://localhost:3000.
+  const res = await fetch(
+    `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/movies`,
+    { cache: 'no-store' }
+  );
+  const movies: Movie[] = await res.json();
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-gray-100">
+      {/* Шапка */}
+      <header className="bg-gray-900 text-white">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <h1 className="text-2xl font-bold">ANIMEONE</h1>
+          <nav className="space-x-4 hidden sm:block">
+            <a href="#" className="hover:text-gray-300">Топ 100</a>
+            <a href="#" className="hover:text-gray-300">Новости</a>
+            <a href="#" className="hover:text-gray-300">Сериалы</a>
+            <a href="#" className="hover:text-gray-300">Фильмы</a>
+            <a href="#" className="hover:text-gray-300">Многосерийные</a>
+            <a href="#" className="hover:text-gray-300">Закладки</a>
+          </nav>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </header>
+
+      {/* Основной блок */}
+      <div className="container mx-auto px-4 py-6 flex">
+        {/* Левая колонка (жанры, фильтры) */}
+        <aside className="hidden lg:block w-64 mr-6">
+          <div className="bg-white rounded shadow p-4 mb-4">
+            <h2 className="text-lg font-bold mb-2">Жанры</h2>
+            <ul className="space-y-1">
+              <li>
+                <a href="#" className="text-blue-600 hover:underline">
+                  Приключения
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-blue-600 hover:underline">
+                  Экшен
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-blue-600 hover:underline">
+                  Комедия
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-blue-600 hover:underline">
+                  Драма
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div className="bg-white rounded shadow p-4">
+            <h2 className="text-lg font-bold mb-2">Годы</h2>
+            <ul className="space-y-1">
+              <li>
+                <a href="#" className="text-blue-600 hover:underline">
+                  2023
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-blue-600 hover:underline">
+                  2022
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-blue-600 hover:underline">
+                  2021
+                </a>
+              </li>
+            </ul>
+          </div>
+        </aside>
+
+        {/* Центральная часть (карточки аниме) */}
+        <main className="flex-1">
+          {/* Заголовок или слайдер */}
+          <div className="mb-6">
+            <h2 className="text-xl font-bold mb-2">Смотреть аниме онлайн</h2>
+            <p className="text-gray-600">
+              Здесь можно добавить описание или баннер
+            </p>
+          </div>
+
+          {/* Сетка карточек */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
+            {movies.map((movie) => (
+              <div key={movie.id} className="bg-white rounded shadow overflow-hidden">
+                {/* Обложка аниме */}
+                <div className="relative w-full h-48">
+                  {movie.coverUrl && movie.coverUrl.trim() !== '' ? (
+                    <Image
+                      src={movie.coverUrl}
+                      alt={movie.title}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-300">
+                      <span className="text-gray-500">No Image</span>
+                    </div>
+                  )}
+                </div>
+                <div className="p-3">
+                  <h3 className="text-sm font-bold truncate">{movie.title}</h3>
+                  <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                    {movie.description}
+                  </p>
+                  <p className="text-xs text-blue-600 mt-1">{movie.genre}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
