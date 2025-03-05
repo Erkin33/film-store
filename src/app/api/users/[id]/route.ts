@@ -1,10 +1,9 @@
-// app/api/users/[id]/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 
 // PUT: Обновление пользователя
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const id = parseInt(params.id);
     const { email, password } = await request.json();
@@ -32,7 +31,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 }
 
 // DELETE: Удаление пользователя
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const id = parseInt(params.id);
     await prisma.user.delete({ where: { id } });
