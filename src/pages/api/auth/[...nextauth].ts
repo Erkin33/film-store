@@ -1,3 +1,4 @@
+// pages/api/auth/[...nextauth].ts
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import prisma from '@/lib/prisma';
@@ -8,33 +9,48 @@ export default NextAuth({
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "text", placeholder: "test@example.com" },
-        password: { label: "Password", type: "password" }
+        email: { label: 'Email', type: 'text', placeholder: 'test@example.com' },
+        password: { label: 'Password', type: 'password' }
       },
       async authorize(credentials) {
-        // Найти пользователя по email
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
+
+        // 1. Ищем пользователя в базе по email
         const user = await prisma.user.findUnique({
-          where: { email: credentials?.email },
+          where: { email: credentials.email },
         });
         if (!user) return null;
-        // Сравнить пароль
-        const isValid = await bcrypt.compare(credentials!.password, user.password);
+
+        // 2. Проверяем пароль
+        const isValid = await bcrypt.compare(credentials.password, user.password);
         if (!isValid) return null;
-        return user;
-      }
-    })
+
+        // 3. Возвращаем объект, который NextAuth воспримет как User:
+        //    - Приводим id к строке
+        //    - Не возвращаем password, createdAt, updatedAt
+        return {
+          id: String(user.id),
+          email: user.email,
+          name: user.name ?? user.email, // Или просто user.name
+          // image: user.image // если в таблице есть поле image
+        };
+      },
+    }),
   ],
-  session: {
-    strategy: 'jwt',
-  },
   callbacks: {
-    async session({ session, token, user }) {
-      // Можно добавить дополнительные поля в сессию, например, id пользователя
-      if (token && session.user) {
-        session.user.id = token.sub;
+    async session({ session, token }) {
+      // Если хотим хранить id в session.user
+      if (session.user && token.sub) {
+        // Явно говорим TS, что user может иметь id
+        (session.user as { id?: string }).id = token.sub;
       }
       return session;
-    }
+    },
+  },
+  session: {
+    strategy: 'jwt',
   },
   secret: process.env.NEXTAUTH_SECRET,
 });
